@@ -1,1 +1,9 @@
-# byzantine-paxos
+byzantine
+=====
+
+An OTP application
+
+Build
+-----
+
+    $ rebar3 compile
