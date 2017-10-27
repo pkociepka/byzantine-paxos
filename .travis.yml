@@ -1,5 +1,11 @@
 language: erlang
 otp_release:
-  - 19.0
-  - 18.2.1
-
+- 19.0
+- 18.2.1
+deploy:
+  provider: heroku
+  api_key:
+    secure: HJ+NyGfSjLZOK9ijQ7vV1/lzr59LftE552H0Ud1oHvaJRgwn5b/5rbuq9SeiF3lAhmqLlJ0Ma7tvMY396LmU7TxMcgMcyTFq2cWyLR940nkVZOQ4ljPD9vHT+dNg3YyXvHOirZAG9gcobpZql3HGr13XLWzCqVFSavFTfqLhb4Knut2mXmV3depPyttcDqCDjkgbPdMHyEO5Ha4Hh/mF6cmF1SjeqvQs+MxIfZgJqEx5AjK5rHEz4qqMuA5rtx4qYtQmTyf38+fuJeHC/0ghbPGOGZLIPrjl78RKINAv0U7C/UiHZzFwLIz0VtAYUQFBTo4N8XfJAnuF2y1RqMv2g2zW8yJ6dKdzFMk+tHsbzJkndVvRrPMYFd5WKllgJjFSNAlE1zBddzZCZ+4a1zSeuPLXsI+velz8yOjgheWgDpv11MSTwNhQUNMTtSjOiBibXfbVYFE6CcBbbshYAi4IqVyUONJbeJig+LS6kW7VKG2/qZA1sEcNndNbIiN4xH5+G+n+aI96n5FGmSEdbvFUzCLGbf2JkeWhkBJlxpkkkX94nR99pR6B6vwTP5aWghbEzauRmhvCGriTR/kWYAnIi9eraUSbnwn81Sgd7pkScNCjV3IFDTc4UVHUMLNbt1rQ8wNru+q0isWbF73btbzyY9C0luGQtgSHhtLHobgMCFk=
+  app: byzantine-paxos
+  on:
+    repo: pkociepka/byzantine-paxos
