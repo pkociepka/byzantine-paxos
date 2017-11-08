@@ -9,7 +9,7 @@ start(NodesCount) ->
 listen(Nodes) ->
     receive
         {get_nodes, SenderPid} ->
-            SenderPid ! Nodes,
+            SenderPid ! {ok, Nodes},
             listen(nodes);
         {reset_cluster, NodesCount} ->
             [N ! ok || N <- Nodes],

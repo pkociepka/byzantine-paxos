@@ -35,7 +35,8 @@ stop(_State) ->
 routes() ->
     [
      {'_', [
-            {"/", paxos_client, []}
+            {"/", paxos_client, []},
+            {"/get/:key", paxos_get_client, []}
            ]}
     ].
 
