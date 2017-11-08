@@ -1,13 +1,14 @@
 {application, byzantine,
- [{description, "An OTP application"},
-  {vsn, "0.1.0"},
+ [{description, "An implementation of the byzantine paxos algorithm"},
+  {vsn, "0.1.1"},
   {registered, []},
   {mod, { byzantine_app, []}},
   {applications,
    [kernel,
-    stdlib
+    stdlib,
+    cowboy
    ]},
-  {env,[]},
+  {env,[{http_port, 8080}]},
   {modules, []},
 
   {maintainers, []},
