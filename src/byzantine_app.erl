@@ -35,7 +35,8 @@ stop(_State) ->
 routes() ->
     [
      {'_', [
-            {"/", paxos_client, []},
+            {"/", cowboy_static, {priv_file, byzantine, "static/index.html"}},
+            {"/assets/[...]", cowboy_static, {priv_dir, byzantine, "static/assets"}},
             {"/get/:key", paxos_get_client, []},
             {"/put/:key/:value", paxos_put_client, []}
            ]}

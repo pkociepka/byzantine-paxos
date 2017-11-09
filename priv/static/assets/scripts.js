@@ -1,0 +1,3 @@
+function getKey(key) {
+    $.get('')
+}
