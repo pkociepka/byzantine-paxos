@@ -14,12 +14,15 @@ content_types_provided(Req, State) ->
 
 handle(Req, State) ->
     Key = cowboy_req:binding(key, Req),
+    clock ! {get, self()},
     cl_monitor ! {get_nodes, self()},
     receive
-        {ok, Nodes} -> ask(Nodes, Key, Req, State)
+        {seq, SeqNumber} -> receive
+            {ok, Nodes} -> ask(Nodes, Key, SeqNumber, Req, State)
+        end
     end.
 
-ask(Nodes, Key, Req, State) ->
+ask(Nodes, Key, _SeqNumber, Req, State) ->
     [N ! {get, Key, self()} || N <- Nodes],
     Responses = [receive X -> X end || _N <- Nodes],
     % ordinary Paxos!

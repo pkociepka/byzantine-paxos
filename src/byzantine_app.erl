@@ -36,7 +36,8 @@ routes() ->
     [
      {'_', [
             {"/", paxos_client, []},
-            {"/get/:key", paxos_get_client, []}
+            {"/get/:key", paxos_get_client, []},
+            {"/put/:key/:value", paxos_put_client, []}
            ]}
     ].
 
