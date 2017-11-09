@@ -4,6 +4,10 @@
 -export([content_types_provided/2]).
 -export([handle/2]).
 
+-ifdef(TEST).
+-compile(export_all).
+-endif.
+
 init(Req, Opts) ->
     {cowboy_rest, Req, Opts}.
 

@@ -3,12 +3,12 @@
 -export([start/1]).
 
 start(SeqNumber) ->
-    listen(SeqNumber, #{<<"42">> => <<"fortytwo">>}).
+    listen(SeqNumber, #{}).
 
 listen(SeqNumber, ValuesMap) ->
     receive
         {get, Key, Pid} ->
-            Pid ! maps:get(Key, ValuesMap),
+            Pid ! {self(), maps:get(Key, ValuesMap)},
             listen(SeqNumber, ValuesMap);
         {propose, Key, Value, MessageSeqNumber, SenderPid} ->
             case MessageSeqNumber > SeqNumber of
