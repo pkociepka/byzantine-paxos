@@ -28,7 +28,7 @@ handle(Req, State) ->
     end.
 
 propose(Nodes, Key, Value, SeqNumber, Req, State) ->
-    [N ! {propose, Key, Value, SeqNumber, self()} || N <- Nodes],
+    [messenger:send(self(), N, {propose, Key, Value, SeqNumber, self()}) || N <- Nodes],
     Responses = [receive X -> X end || _N <- Nodes],
     % ordinary Paxos!
     try_accept(Key, Value, SeqNumber, Responses, length(Responses) div 2, Nodes, Req, State).
@@ -36,7 +36,7 @@ propose(Nodes, Key, Value, SeqNumber, Req, State) ->
 try_accept(Key, Value, SeqNumber, Responses, Quorum, Nodes, Req, State) ->
     case length([X || X <- Responses, X == {ok, Key, Value}]) >= Quorum of
         true ->
-            [N ! {save, Key, Value, SeqNumber, self()} || N <- Nodes],
+            [messenger:send(self(), N, {save, Key, Value, SeqNumber, self()}) || N <- Nodes],
             AckResponses = [receive X -> X after 1000 -> {nope} end || _N <- Nodes],
             accept(Key, Value, AckResponses, Quorum, Req, State);
         false -> reject(Req, State)

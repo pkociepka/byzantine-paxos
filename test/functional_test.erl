@@ -1,6 +1,9 @@
 -module(functional_test).
 -include_lib("eunit/include/eunit.hrl").
 
+setup_test() ->
+    register(messenger, spawn_link(messenger, start, [])).
+
 put_test() ->
     SeqNumber = 1,
     Nodes = [spawn_link(paxos_node, start, [SeqNumber]) || _X <- lists:seq(1, 5)],

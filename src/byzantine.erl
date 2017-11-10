@@ -5,4 +5,5 @@
 start() ->
     {ok, _Started} = application:ensure_all_started(byzantine),
     register(cl_monitor, spawn_link(cluster_monitor, start, [3])),
-    register(clock, spawn_link(client_clock, start, [2])).
+    register(clock, spawn_link(client_clock, start, [2])),
+    register(messenger, spawn_link(messenger, start, [])).
