@@ -5,8 +5,11 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-    <style>main {margin-top: 1em}</style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
+          integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <style>main {
+        margin-top: 1em
+    }</style>
 
 </head>
 <body>
@@ -20,43 +23,55 @@
             <form id="readForm">
                 <div class="form-row align-items-end">
                     <div class="form-group col">
-                        <label for="writeKey">Key</label>
-                        <input type="text" class="form-control col" placeholder="Key" id="readKey">
+                        <label for="readKey">Key</label>
+                        <input type="text" class="form-control col" placeholder="Key" id="readKey" required>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group col">
                         <label for="readValue">Value:</label>
                         <input type="text" class="form-control" id="readValue" readonly/>
                     </div>
                 </div>
-                <div class="form-group">
-                    <button class="btn btn-primary">Read</button>
+                <div class="form-row">
+                    <div class="form-group col-md-auto">
+                        <button class="btn btn-primary">Read</button>
+                    </div>
+                    <div class="col alert-container"></div>
                 </div>
             </form>
         </div>
         <div class="col-sm">
             <h2>Store value</h2>
-            <form>
+            <form id="writeForm">
                 <div class="form-row">
                     <div class="form-group col">
                         <label for="writeKey">Key</label>
-                        <input type="text" class="form-control col" id="writeKey">
+                        <input type="text" class="form-control col" id="writeKey" required>
                     </div>
                     <div class="form-group col">
                         <label for="writeValue">New Value</label>
-                        <input type="text" class="form-control col" id="writeValue">
+                        <input type="text" class="form-control col" id="writeValue" required>
                     </div>
                 </div>
-                <div class="form-group">
-                    <button class=" btn btn-primary">Write</button>
+                <div class="form-row">
+                    <div class="form-group col-md-auto">
+                        <button class=" btn btn-primary">Write</button>
+                    </div>
+                    <div class="col alert-container"></div>
                 </div>
             </form>
         </div>
     </div>
     <!--<div class="row col-sm">-->
-        <!--<h2>Log</h2>-->
+    <!--<h2>Log</h2>-->
     <!--</div>-->
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"
             integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
+            integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
+            integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
             crossorigin="anonymous"></script>
     <script src="/assets/scripts.js"></script>
 </main>
