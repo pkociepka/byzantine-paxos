@@ -49,9 +49,7 @@ accept(Key, Value, Responses, Quorum, Req, State) ->
     end.
 
 accept(Req, State) ->
-    Response = json_formatter:format_response(true, self(), [], [], []),
-    {Response, Req, State}.
+    {response:create(true), Req, State}.
 
 reject(Req, State) ->
-    Response = json_formatter:format_response(false, self(), [], [], []),
-    {Response, Req, State}.
+    {response:create(false), Req, State}.

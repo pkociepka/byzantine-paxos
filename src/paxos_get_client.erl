@@ -34,14 +34,14 @@ ask(Nodes, Key, _SeqNumber, Req, State) ->
     % ordinary Paxos!
     find_winner(Nodes, Values, length(Values) div 2, Req, State).
 
-find_winner(Nodes, [], _Quorum, Req, State) ->
-    Response = json_formatter:format_response(null, self(), Nodes, [], []),
+find_winner(_Nodes, [], _Quorum, Req, State) ->
+    Response = response:create(null),
     {Response, Req, State};
 
 find_winner(Nodes, Values, Quorum, Req, State) ->
     [Candidate | Rest] = Values,
     case length([X || X <- Values, X == Candidate]) >= Quorum of
-        true -> Response = json_formatter:format_response(Candidate, self(), Nodes, [], []),
-            {Response, Req, State};
+        true ->
+            {response:create(Candidate), Req, State};
         _ -> find_winner(Nodes, Rest, Quorum, Req, State)
     end.

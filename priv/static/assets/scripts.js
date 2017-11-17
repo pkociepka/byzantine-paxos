@@ -23,12 +23,22 @@ function dumpLog(log) {
     let map = d3.map(acceptors.concat(traitors), e => e.pid);
     let sel = logTable.selectAll("tr").remove().data(log.messages);
     let messages = sel.enter().append("tr");
-    messages.append("td").text(m => map.get(m.from).label)
+
+    function label(m) {
+        let a = map.get(m);
+        return a ? a.label : m;
+    }
+    function isTraitor(m) {
+        let a = map.get(m);
+        return a && a.traitor;
+    }
+
+    messages.append("td").text(m => label(m.from))
         .classed("leader", m => log.leader === m.from)
-        .classed("traitor", m => map.get(m.from).traitor);
-    messages.append("td").text(m => map.get(m.to).label)
+        .classed("traitor", m => isTraitor(m.from));
+    messages.append("td").text(m => label(m.to))
         .classed("leader", m => log.leader === m.to)
-        .classed("traitor", m => map.get(m.to).traitor);
+        .classed("traitor", m => isTraitor(m.to));
     messages.append("td").text(m => m.msg);
 }
 

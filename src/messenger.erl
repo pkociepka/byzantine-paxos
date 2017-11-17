@@ -9,7 +9,7 @@ loop(Messages) ->
   receive
     {send, From, To, Msg} ->
       To ! Msg,
-      loop([Msg | Messages]);
+      loop([{From,To,Msg} | Messages]);
     {get_log, Pid} ->
       Pid ! {log, lists:reverse(Messages)},
       flush(),

@@ -1,6 +1,14 @@
--module(json_formatter).
+-module(response).
 
--export([format_response/5]).
+-export([format_response/5, create/1]).
+
+create(Value) ->
+  %TODO get from logger
+  Leader = self(), % kinda works :D
+  Nodes = [],
+  TraitorNodes = [],
+  Messages = messenger:get_log(),
+  format_response(Value, Leader, Nodes, TraitorNodes, Messages).
 
 format_response(Value, Leader, Nodes, TraitorNodes, Messages) ->
   jsx:encode([
@@ -18,5 +26,5 @@ format_message(Message) ->
   [
     {<<"from">>, format_pid(From)},
     {<<"to">>, format_pid(To)},
-    {<<"msg">>, lists:flatten(io_lib:format("~p", [Msg]))}
+    {<<"msg">>, list_to_binary(lists:flatten(io_lib:format("~p", [Msg])))}
   ].
