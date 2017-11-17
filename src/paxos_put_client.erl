@@ -46,9 +46,11 @@ try_accept(Key, Value, SeqNumber, Responses, Quorum, Nodes, Req, State) ->
 accept(Key, Value, Responses, Quorum, Req, State) ->
     case length([X || X <- Responses, X == {saved, Key, Value}]) >= Quorum of
         true ->
+            io:format("~p~n", [messenger:get_pretty_log(self(), <<"Accepted">>)]),
             {<<"Accepted">>, Req, State};
         false -> reject(Req, State)
     end.
 
 reject(Req, State) ->
+    io:format("~p~n", [messenger:get_pretty_log(self(), <<"Rejected">>)]),
     {<<"Rejected">>, Req, State}.

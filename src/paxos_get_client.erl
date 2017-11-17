@@ -31,15 +31,18 @@ ask(Nodes, Key, _SeqNumber, Req, State) ->
     Responses = lists:sort(fun({Pid1, V1}, {Pid2, V2}) -> Pid1 < Pid2 end,
                            [receive X -> X end || _N <- Nodes]),
     Values = [V || {Pid, V} <- Responses, V /= no_value],
-    % ordinary Paxos!
     find_winner(Nodes, Values, length(Values) div 2, Req, State).
 
 find_winner(_Nodes, [], _Quorum, Req, State) ->
+    io:format("~p~n", [messenger:get_pretty_log(self(), <<"no winner">>)]),
     {<<"no winner">>, Req, State};
 
 find_winner(Nodes, Values, Quorum, Req, State) ->
     [Candidate | Rest] = Values,
     case length([X || X <- Values, X == Candidate]) >= Quorum of
-        true -> {Candidate, Req, State};
-        _ -> find_winner(Nodes, Rest, Quorum, Req, State)
+        true -> 
+            io:format("~p~n", [messenger:get_pretty_log(self(), Candidate)]),
+            {Candidate, Req, State};
+        _ ->
+            find_winner(Nodes, Rest, Quorum, Req, State)
     end.

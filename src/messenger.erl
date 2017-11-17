@@ -1,6 +1,6 @@
 -module(messenger).
 
--export([start/0, stop/0, send/3, broadcast/2, broadcast_many/2, get_log/0]).
+-export([start/0, stop/0, send/3, broadcast/2, broadcast_many/2, get_log/0, get_pretty_log/2]).
 
 start() ->
   loop([]).
@@ -49,3 +49,17 @@ flush() ->
   after 0 ->
     ok
   end.
+
+get_pretty_log(ClientPid, Result) ->
+  {Nodes, Malicious} = cluster_monitor:get_nodes_separately(),
+  #{result => Result,
+    nodes => #{
+      leader => ClientPid,
+      normal_nodes => Nodes,
+      byzantine => Malicious
+    },
+    messages => [format_entry(X) || X <- get_log()]
+   }.
+
+format_entry({From, To, Msg}) ->
+  #{from => From, to => To, msg => Msg}.
