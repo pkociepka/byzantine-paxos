@@ -13,7 +13,7 @@ init(Req, Opts) ->
 
 content_types_provided(Req, State) ->
     {[
-        {<<"text/plain">>, handle}
+        {<<"application/json">>, handle}
     ], Req, State}.
 
 handle(Req, State) ->
@@ -44,10 +44,14 @@ try_accept(Key, Value, SeqNumber, Responses, Quorum, Nodes, Req, State) ->
 
 accept(Key, Value, Responses, Quorum, Req, State) ->
     case length([X || X <- Responses, X == {saved, Key, Value}]) >= Quorum of
-        true ->
-            {<<"Accepted">>, Req, State};
+        true -> accept(Req, State);
         false -> reject(Req, State)
     end.
 
+accept(Req, State) ->
+    Response = json_formatter:format_response(true, self(), [], [], []),
+    {Response, Req, State}.
+
 reject(Req, State) ->
-    {<<"Rejected">>, Req, State}.
+    Response = json_formatter:format_response(false, self(), [], [], []),
+    {Response, Req, State}.
