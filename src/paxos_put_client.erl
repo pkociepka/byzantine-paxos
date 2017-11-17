@@ -34,7 +34,7 @@ propose(Nodes, Key, Value, SeqNumber, Req, State) ->
     try_accept(Key, Value, SeqNumber, Responses, length(Responses) div 2, Nodes, Req, State).
 
 try_accept(Key, Value, SeqNumber, Responses, Quorum, Nodes, Req, State) ->
-    case length([X || X <- Responses, X == {ok, Key, Value}]) >= Quorum of
+    case length([X || X <- Responses, X == {promise, Key, Value}]) >= Quorum of
         true ->
             [messenger:send(self(), N, {save, Key, Value, SeqNumber, self()}) || N <- Nodes],
             AckResponses = [receive X -> X after 1000 -> {nope} end || _N <- Nodes],

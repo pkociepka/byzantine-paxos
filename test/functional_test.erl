@@ -2,6 +2,7 @@
 -include_lib("eunit/include/eunit.hrl").
 
 setup_test() ->
+    register(cl_monitor, spawn_link(cluster_monitor, start, [3])),
     register(messenger, spawn_link(messenger, start, [])).
 
 put_test() ->

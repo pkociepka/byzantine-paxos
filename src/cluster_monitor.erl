@@ -2,18 +2,20 @@
 
 -export([start/1]).
 
-start(NodesCount) ->
-    Nodes = [spawn_link(paxos_node, start, [1]) || _X <- lists:seq(1, NodesCount)],
-    listen(Nodes).
+start(N) ->
+    Nodes = [spawn_link(paxos_node, start, [1]) || _X <- lists:seq(1, 2*N+1)],
+    Malicious = [spawn_link(malicious_node, start, [1]) || _X <- lists:seq(1, N)],
+    listen(Nodes, Malicious).
 
-listen(Nodes) ->
+listen(Nodes, Malicious) ->
     receive
         {get_nodes, SenderPid} ->
-            SenderPid ! {ok, Nodes},
-            listen(Nodes);
-        {reset_cluster, NodesCount} ->
+            SenderPid ! {ok, Nodes ++ Malicious},
+            listen(Nodes, Malicious);
+        {reset_cluster, N} ->
             [N ! ok || N <- Nodes],
-            NewNodes = [spawn_link(paxos_node, start, [1]) || _X <- lists:seq(1, NodesCount)],
-            listen(NewNodes);
+            NewNodes = [spawn_link(paxos_node, start, [1]) || _X <- lists:seq(1, 2*N+1)],
+            NewMalicious = [spawn_link(malicious_node, start, [1]) || _X <- lists:seq(1, N)],
+            listen(NewNodes, NewMalicious);
         ok -> ok
     end.
