@@ -52,6 +52,6 @@ get_non_existing_key_test() ->
     SeqNumber = 1,
     Nodes = [spawn_link(paxos_node, start, [SeqNumber]) || _X <- lists:seq(1, 5)],
     ?assertEqual(
-        {no_value, req, state},
+        {<<"no winner">>, req, state},
         paxos_get_client:ask(Nodes, dummy_key, SeqNumber+1, req, state)
     ).

@@ -30,7 +30,7 @@ ask(Nodes, Key, _SeqNumber, Req, State) ->
     [messenger:send(self(), N, {get, Key, self()}) || N <- Nodes],
     Responses = lists:sort(fun({Pid1, V1}, {Pid2, V2}) -> Pid1 < Pid2 end,
                            [receive X -> X end || _N <- Nodes]),
-    Values = [V || {Pid, V} <- Responses],
+    Values = [V || {Pid, V} <- Responses, V /= no_value],
     % ordinary Paxos!
     find_winner(Nodes, Values, length(Values) div 2, Req, State).
 
