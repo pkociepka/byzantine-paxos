@@ -13,7 +13,7 @@ init(Req, Opts) ->
 
 content_types_provided(Req, State) ->
     {[
-        {<<"text/plain">>, handle}
+        {<<"application/json">>, handle}
     ], Req, State}.
 
 handle(Req, State) ->
@@ -23,7 +23,9 @@ handle(Req, State) ->
     cl_monitor ! {get_nodes, self()},
     receive
         {seq, SeqNumber} -> receive
-            {ok, Nodes} -> propose(Nodes, Key, Value, SeqNumber, Req, State)
+            {ok, Nodes} ->
+                {Response, Req, State} = propose(Nodes, Key, Value, SeqNumber, Req, State),
+                {response:create(Response), Req, State}
         end
     end.
 
@@ -45,12 +47,10 @@ try_accept(Key, Value, SeqNumber, Responses, Quorum, Nodes, Req, State) ->
 
 accept(Key, Value, Responses, Quorum, Req, State) ->
     case length([X || X <- Responses, X == {saved, Key, Value}]) >= Quorum of
-        true ->
-            io:format("~p~n", [messenger:get_pretty_log(self(), <<"Accepted">>)]),
-            {<<"Accepted">>, Req, State};
+        true -> accept(Req, State);
         false -> reject(Req, State)
     end.
 
-reject(Req, State) ->
-    io:format("~p~n", [messenger:get_pretty_log(self(), <<"Rejected">>)]),
-    {<<"Rejected">>, Req, State}.
+accept(Req, State) -> {true, Req, State}.
+
+reject(Req, State) -> {false, Req, State}.

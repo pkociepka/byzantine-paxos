@@ -13,7 +13,7 @@ init(Req, Opts) ->
 
 content_types_provided(Req, State) ->
     {[
-        {<<"text/plain">>, handle}
+        {<<"application/json">>, handle}
     ], Req, State}.
 
 handle(Req, State) ->
@@ -22,7 +22,9 @@ handle(Req, State) ->
     cl_monitor ! {get_nodes, self()},
     receive
         {seq, SeqNumber} -> receive
-            {ok, Nodes} -> ask(Nodes, Key, SeqNumber, Req, State)
+            {ok, Nodes} ->
+                {Response, Req, State} = ask(Nodes, Key, SeqNumber, Req, State),
+                {response:create(Response), Req, State}
         end
     end.
 
@@ -34,15 +36,12 @@ ask(Nodes, Key, _SeqNumber, Req, State) ->
     find_winner(Nodes, Values, length(Values) div 2, Req, State).
 
 find_winner(_Nodes, [], _Quorum, Req, State) ->
-    io:format("~p~n", [messenger:get_pretty_log(self(), <<"no winner">>)]),
-    {<<"no winner">>, Req, State};
+    {null, Req, State};
 
 find_winner(Nodes, Values, Quorum, Req, State) ->
     [Candidate | Rest] = Values,
     case length([X || X <- Values, X == Candidate]) >= Quorum of
-        true -> 
-            io:format("~p~n", [messenger:get_pretty_log(self(), Candidate)]),
+        true ->
             {Candidate, Req, State};
-        _ ->
-            find_winner(Nodes, Rest, Quorum, Req, State)
+        _ -> find_winner(Nodes, Rest, Quorum, Req, State)
     end.

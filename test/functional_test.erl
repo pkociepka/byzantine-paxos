@@ -10,7 +10,7 @@ put_test() ->
     cluster_monitor:reset_cluster(1),
     Nodes = cluster_monitor:get_nodes(),
     ?assertEqual(
-        {<<"Accepted">>, req, state},
+        {true, req, state},
         paxos_put_client:propose(Nodes, <<"Key">>, <<"Value">>, SeqNumber+1, req, state)
     ).
 
@@ -19,7 +19,7 @@ put_fail_with_too_low_seq_number_test() ->
     cluster_monitor:reset_cluster(1),
     Nodes = cluster_monitor:get_nodes(),
     ?assertEqual(
-        {<<"Rejected">>, req, state},
+        {false, req, state},
         paxos_put_client:propose(Nodes, <<"Key">>, <<"Value">>, SeqNumber, req, state)
     ).
 
@@ -58,6 +58,6 @@ get_non_existing_key_test() ->
     cluster_monitor:reset_cluster(1),
     Nodes = cluster_monitor:get_nodes(),
     ?assertEqual(
-        {<<"no winner">>, req, state},
+        {null, req, state},
         paxos_get_client:ask(Nodes, dummy_key, SeqNumber+1, req, state)
     ).
