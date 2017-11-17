@@ -21,8 +21,16 @@ function dumpLog(log) {
     let acceptors = log.acceptors.map((a, i) => ({pid: a, label: "A" + i, traitor: false}));
     let traitors = log.traitors.map((a, i) => ({pid: a, label: "T" + i, traitor: true}));
     let map = d3.map(acceptors.concat(traitors), e => e.pid);
-    let sel = logTable.selectAll("tr").remove().data(log.messages);
-    let messages = sel.enter().append("tr");
+    map.set(log.leader, {pid:log.leader, label:"Leader", traitor:false});
+    let sel = logTable.selectAll("tr").data(log.messages);
+
+    sel.exit().remove();
+
+    let added = sel.enter().append("tr");
+    added.append("td").attr("class", "from");
+    added.append("td").attr("class", "to");
+    added.append("td").attr("class", "msg");
+    sel = added.merge(sel);
 
     function label(m) {
         let a = map.get(m);
@@ -33,13 +41,15 @@ function dumpLog(log) {
         return a && a.traitor;
     }
 
-    messages.append("td").text(m => label(m.from))
+    sel.select(".from").text(m => label(m.from))
         .classed("leader", m => log.leader === m.from)
         .classed("traitor", m => isTraitor(m.from));
-    messages.append("td").text(m => label(m.to))
+    sel.select(".to").text(m => label(m.to))
         .classed("leader", m => log.leader === m.to)
         .classed("traitor", m => isTraitor(m.to));
-    messages.append("td").text(m => m.msg);
+    sel.select(".msg").text(m => m.msg);
+
+
 }
 
 (function () {
