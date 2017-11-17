@@ -8,7 +8,7 @@ put_test() ->
     SeqNumber = 1,
     Nodes = [spawn_link(paxos_node, start, [SeqNumber]) || _X <- lists:seq(1, 5)],
     ?assertEqual(
-        {<<"Accepted">>, req, state},
+        {true, req, state},
         paxos_put_client:propose(Nodes, <<"Key">>, <<"Value">>, SeqNumber+1, req, state)
     ).
 
@@ -16,7 +16,7 @@ put_fail_with_too_low_seq_number_test() ->
     SeqNumber = 2,
     Nodes = [spawn_link(paxos_node, start, [SeqNumber]) || _X <- lists:seq(1, 5)],
     ?assertEqual(
-        {<<"Rejected">>, req, state},
+        {false, req, state},
         paxos_put_client:propose(Nodes, <<"Key">>, <<"Value">>, SeqNumber, req, state)
     ).
 

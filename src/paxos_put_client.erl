@@ -23,7 +23,9 @@ handle(Req, State) ->
     cl_monitor ! {get_nodes, self()},
     receive
         {seq, SeqNumber} -> receive
-            {ok, Nodes} -> propose(Nodes, Key, Value, SeqNumber, Req, State)
+            {ok, Nodes} ->
+                {Response, Req, State} = propose(Nodes, Key, Value, SeqNumber, Req, State),
+                {response:create(Response), Req, State}
         end
     end.
 
@@ -48,8 +50,6 @@ accept(Key, Value, Responses, Quorum, Req, State) ->
         false -> reject(Req, State)
     end.
 
-accept(Req, State) ->
-    {response:create(true), Req, State}.
+accept(Req, State) -> {true, Req, State}.
 
-reject(Req, State) ->
-    {response:create(false), Req, State}.
+reject(Req, State) -> {false, Req, State}.
