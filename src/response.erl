@@ -5,8 +5,7 @@
 create(Value) ->
   %TODO get from logger
   Leader = self(), % kinda works :D
-  Nodes = [],
-  TraitorNodes = [],
+  {Nodes, TraitorNodes} = cluster_monitor:get_nodes_separately(),
   Messages = messenger:get_log(),
   format_response(Value, Leader, Nodes, TraitorNodes, Messages).
 
