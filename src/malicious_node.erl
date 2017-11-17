@@ -35,7 +35,7 @@ promise(SenderPid, Key, Value, SeqNumber, ValuesMap) ->
     Responses = [receive {promise, Key, PromisedValue} -> PromisedValue  after 100 -> timeout end || N <- lists:seq(1, NodesCount)],
     case length([X || X <- Responses, X == Value]) >= Quorum of
         true ->
-            messenger:send(self(), SenderPid, {promise, Key, Value}),
+            messenger:send(self(), SenderPid, fun() -> {promise, Key, maybe_value(Value)} end),
             await_save(Key, Value, SeqNumber, ValuesMap);
         _ ->
             reject(SenderPid, Key, Value, SeqNumber, ValuesMap)
@@ -57,7 +57,7 @@ save(SenderPid, Key, Value, SeqNumber, ValuesMap) ->
     Responses = [receive {try_save, Key, PromisedValue} -> PromisedValue  after 100 -> timeout end || N <- lists:seq(1, NodesCount)],
     case length([X || X <- Responses, X == Value]) >= Quorum of
         true ->
-            messenger:send(self(), SenderPid, {saved, Key, Value}),
+            messenger:send(self(), SenderPid, fun() -> {try_save, Key, maybe_value(Value)} end),
             listen(SeqNumber, maps:put(Key, Value, ValuesMap));
         _ ->
             reject(SenderPid, Key, Value, SeqNumber, ValuesMap)
