@@ -1,6 +1,6 @@
 -module(cluster_monitor).
 
--export([start/1]).
+-export([start/1, get_nodes/0, reset_cluster/1]).
 
 start(N) ->
     Nodes = [spawn_link(paxos_node, start, [1]) || _X <- lists:seq(1, 2*N+1)],
@@ -19,3 +19,12 @@ listen(Nodes, Malicious) ->
             listen(NewNodes, NewMalicious);
         ok -> ok
     end.
+
+get_nodes() ->
+    cl_monitor ! {get_nodes, self()},
+    receive
+        {ok, Nodes} -> Nodes
+    end.
+
+reset_cluster(N) ->
+    cl_monitor ! {reset_cluster, N}.

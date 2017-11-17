@@ -7,15 +7,17 @@ setup_test() ->
 
 put_test() ->
     SeqNumber = 1,
-    Nodes = [spawn_link(paxos_node, start, [SeqNumber]) || _X <- lists:seq(1, 5)],
+    cluster_monitor:reset_cluster(1),
+    Nodes = cluster_monitor:get_nodes(),
     ?assertEqual(
         {<<"Accepted">>, req, state},
         paxos_put_client:propose(Nodes, <<"Key">>, <<"Value">>, SeqNumber+1, req, state)
     ).
 
 put_fail_with_too_low_seq_number_test() ->
-    SeqNumber = 2,
-    Nodes = [spawn_link(paxos_node, start, [SeqNumber]) || _X <- lists:seq(1, 5)],
+    SeqNumber = 0,
+    cluster_monitor:reset_cluster(1),
+    Nodes = cluster_monitor:get_nodes(),
     ?assertEqual(
         {<<"Rejected">>, req, state},
         paxos_put_client:propose(Nodes, <<"Key">>, <<"Value">>, SeqNumber, req, state)
@@ -23,7 +25,8 @@ put_fail_with_too_low_seq_number_test() ->
 
 put_get_test() ->
     SeqNumber = 1,
-    Nodes = [spawn_link(paxos_node, start, [SeqNumber]) || _X <- lists:seq(1, 5)],
+    cluster_monitor:reset_cluster(1),
+    Nodes = cluster_monitor:get_nodes(),
     Key = <<"42">>,
     Value = <<"fortytwo">>,
     paxos_put_client:propose(Nodes, Key, Value, SeqNumber+1, req, state),
@@ -34,7 +37,8 @@ put_get_test() ->
 
 override_test() ->
     SeqNumber = 1,
-    Nodes = [spawn_link(paxos_node, start, [SeqNumber]) || _X <- lists:seq(1, 5)],
+    cluster_monitor:reset_cluster(1),
+    Nodes = cluster_monitor:get_nodes(),
     Key = <<"42">>,
     Value1 = <<"fortytwo">>,
     Value2 = <<"Fortythree">>,
@@ -51,7 +55,8 @@ override_test() ->
 
 get_non_existing_key_test() ->
     SeqNumber = 1,
-    Nodes = [spawn_link(paxos_node, start, [SeqNumber]) || _X <- lists:seq(1, 5)],
+    cluster_monitor:reset_cluster(1),
+    Nodes = cluster_monitor:get_nodes(),
     ?assertEqual(
         {<<"no winner">>, req, state},
         paxos_get_client:ask(Nodes, dummy_key, SeqNumber+1, req, state)
