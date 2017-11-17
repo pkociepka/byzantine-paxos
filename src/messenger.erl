@@ -20,6 +20,12 @@ loop(Messages) ->
 send(From, To, Msg) ->
   messenger ! {send, From, To, Msg}.
 
+broadcast(From, Msg) ->
+  cl_monitor ! {get_nodes, self()},
+  receive
+    {ok, Nodes} -> [send(From, N, Msg) || N <- Nodes]
+  end.
+
 get_log() ->
   messenger ! {get_log, self()},
   receive

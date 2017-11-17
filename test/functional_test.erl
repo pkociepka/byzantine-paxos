@@ -48,3 +48,10 @@ override_test() ->
         paxos_get_client:ask(Nodes, Key, SeqNumber+4, req, state)
     ).
 
+get_non_existing_key_test() ->
+    SeqNumber = 1,
+    Nodes = [spawn_link(paxos_node, start, [SeqNumber]) || _X <- lists:seq(1, 5)],
+    ?assertEqual(
+        {no_value, req, state},
+        paxos_get_client:ask(Nodes, dummy_key, SeqNumber+1, req, state)
+    ).
