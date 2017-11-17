@@ -34,7 +34,7 @@ function dumpLog(log) {
 
     function label(m) {
         let a = map.get(m);
-        return a ? a.label : m;
+        return a ? a.pid : m;
     }
     function isTraitor(m) {
         let a = map.get(m);
