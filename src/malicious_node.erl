@@ -1,4 +1,4 @@
--module(paxos_node).
+-module(malicious_node).
 
 -export([start/1]).
 
@@ -30,12 +30,12 @@ reject(SenderPid, Key, Value, SeqNumber, ValuesMap) ->
     listen(SeqNumber, ValuesMap).
 
 promise(SenderPid, Key, Value, SeqNumber, ValuesMap) ->
-    NodesCount = messenger:broadcast(self(), {promise, Key, Value}),
+    NodesCount = messenger:broadcast_many(self(), fun() -> {promise, Key, maybe_value(Value)} end),
     Quorum = (NodesCount - 1) / 3 * 2 + 1,
     Responses = [receive {promise, Key, PromisedValue} -> PromisedValue  after 100 -> timeout end || N <- lists:seq(1, NodesCount)],
     case length([X || X <- Responses, X == Value]) >= Quorum of
         true ->
-            messenger:send(self(), SenderPid, {promise, Key, Value}),
+            messenger:send(self(), SenderPid, fun() -> {promise, Key, maybe_value(Value)} end),
             await_save(Key, Value, SeqNumber, ValuesMap);
         _ ->
             reject(SenderPid, Key, Value, SeqNumber, ValuesMap)
@@ -52,13 +52,19 @@ await_save(Key, Value, SeqNumber, ValuesMap) ->
     end.
 
 save(SenderPid, Key, Value, SeqNumber, ValuesMap) ->
-    NodesCount = messenger:broadcast(self(), {try_save, Key, Value}),
+    NodesCount = messenger:broadcast_many(self(), fun() -> {try_save, Key, maybe_value(Value)} end),
     Quorum = (NodesCount - 1) / 3 * 2 + 1,
     Responses = [receive {try_save, Key, PromisedValue} -> PromisedValue  after 100 -> timeout end || N <- lists:seq(1, NodesCount)],
     case length([X || X <- Responses, X == Value]) >= Quorum of
         true ->
-            messenger:send(self(), SenderPid, {saved, Key, Value}),
+            messenger:send(self(), SenderPid, fun() -> {try_save, Key, maybe_value(Value)} end),
             listen(SeqNumber, maps:put(Key, Value, ValuesMap));
         _ ->
             reject(SenderPid, Key, Value, SeqNumber, ValuesMap)
+    end.
+
+maybe_value(Value) ->
+    case random:uniform() > 0.5 of
+        true -> Value;
+        false -> <<"fake">>
     end.
