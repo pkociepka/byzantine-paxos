@@ -58,6 +58,6 @@ get_non_existing_key_test() ->
     cluster_monitor:reset_cluster(1),
     Nodes = cluster_monitor:get_nodes(),
     ?assertEqual(
-        {<<"no winner">>, req, state},
+        {null, req, state},
         paxos_get_client:ask(Nodes, dummy_key, SeqNumber+1, req, state)
     ).
